@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mariadb://15.165.18.100:3306s
+    url:
     username:
     password:
     initialization-mode: always
@@ -8,7 +8,7 @@ spring:
       validation-query: SELECT 1
   jpa:
     database: mysql
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database-platform: org.hibernate.dialect.MariaDB103Dialect
     show-sql: true
     generate-ddl: false
     hibernate:
@@ -16,8 +16,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        hbm2ddl:
-          auto: update
         jdbc:
           lob:
             non_contextual_creation: true
