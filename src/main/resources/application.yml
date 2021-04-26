@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    url: jdbc:mariadb://15.165.18.100:3306s
+    username:
+    password:
+    initialization-mode: always
+    dbcp2:
+      validation-query: SELECT 1
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        hbm2ddl:
+          auto: update
+        jdbc:
+          lob:
+            non_contextual_creation: true
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            BasicBinder: TRACE
