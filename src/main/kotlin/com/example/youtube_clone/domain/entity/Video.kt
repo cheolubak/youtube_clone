@@ -39,6 +39,13 @@ data class Video(
         private val thumbnail: String,
 
         @Column(
+                name = "description",
+                nullable = false,
+                length = 500
+        )
+        private val description: String,
+
+        @Column(
                 name = "duration",
                 nullable = false
         )
@@ -49,6 +56,18 @@ data class Video(
                 nullable = false
         )
         private val like: Int = 0,
+
+        @Column(
+                name = "bads",
+                nullable = false
+        )
+        private val bads: Int = 0,
+
+        @Column(
+                name = "comments",
+                nullable = false
+        )
+        private val comments: Int = 0,
 
         @Column(
                 name = "views",

@@ -21,6 +21,11 @@ class Channel(
         private val id: Int,
 
         @Column(
+                name = "profile"
+        )
+        private val profile: String,
+
+        @Column(
                 name = "thumbnail"
         )
         private val thumbnail: String,
