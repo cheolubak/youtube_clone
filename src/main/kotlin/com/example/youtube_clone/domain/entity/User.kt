@@ -15,7 +15,7 @@ import javax.persistence.*
         pkColumnValue = "user_seq",
         allocationSize = 1
 )
-class User(
+data class User(
         @Id
         @GeneratedValue(
                 strategy = GenerationType.TABLE,
@@ -24,9 +24,21 @@ class User(
         private val id: Int,
 
         @Column(
-                name = "nickname",
+                name = "email",
                 nullable = false,
                 unique = true
+        )
+        private val email: String,
+
+        @Column(
+                name = "password",
+                nullable = false
+        )
+        private val password: String,
+
+        @Column(
+                name = "nickname",
+                nullable = false,
         )
         private val nickname: String,
 
@@ -52,4 +64,7 @@ class User(
         )
         private val updatedAt: Date
 ) {
+    fun getPassword(): String {
+        return password
+    }
 }
