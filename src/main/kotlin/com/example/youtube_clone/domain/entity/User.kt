@@ -2,6 +2,7 @@ package com.example.youtube_clone.domain.entity
 
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
+import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 
@@ -21,7 +22,7 @@ data class User(
                 strategy = GenerationType.TABLE,
                 generator = "user_seq_generator"
         )
-        private val id: Int,
+        private val id: Int = -1,
 
         @Column(
                 name = "email",
@@ -32,39 +33,62 @@ data class User(
 
         @Column(
                 name = "password",
-                nullable = false
+                nullable = false,
         )
         private val password: String,
 
         @Column(
                 name = "nickname",
                 nullable = false,
+                length = 20
         )
         private val nickname: String,
 
         @Column(
                 name = "profile",
-                nullable = false
+                nullable = true
         )
-        private val profile: String,
+        private val profile: String? = null,
 
         @CreationTimestamp
-        @Temporal(TemporalType.TIMESTAMP)
         @Column(
                 name = "created_at",
                 nullable = false
         )
-        private val createdAt: Date,
+        private val createdAt: LocalDateTime = LocalDateTime.now(),
 
         @UpdateTimestamp
-        @Temporal(TemporalType.TIMESTAMP)
         @Column(
                 name = "updated_at",
                 nullable = false
         )
-        private val updatedAt: Date
+        private val updatedAt: LocalDateTime = LocalDateTime.now()
 ) {
+    fun getId(): Int {
+        return id
+    }
+
+    fun getEmail(): String {
+        return email
+    }
+
     fun getPassword(): String {
         return password
+    }
+
+    fun getNickname(): String {
+        return nickname
+    }
+
+    fun getProfile(): String? {
+        return profile
+    }
+
+    fun getCreatedAt(): LocalDateTime {
+        return createdAt
+    }
+
+    fun getUpdatedAt(): LocalDateTime {
+        return updatedAt
     }
 }

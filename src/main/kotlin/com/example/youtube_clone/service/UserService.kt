@@ -1,6 +1,7 @@
 package com.example.youtube_clone.service
 
 import com.example.youtube_clone.domain.dto.LoginDTO
+import com.example.youtube_clone.domain.dto.SignUpDTO
 import com.example.youtube_clone.domain.entity.User
 import com.example.youtube_clone.repository.UserRepository
 import org.slf4j.Logger
@@ -32,5 +33,21 @@ class UserService(
         } else {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
+    }
+
+    fun signUp(signUpDTO: SignUpDTO): User {
+        val email: String = signUpDTO.getEmail()
+        var password: String = signUpDTO.getPassword()
+        var nickname: String = signUpDTO.getNickname()
+        var profile: String? = signUpDTO.getProfile()
+
+        val user = User(
+                email = email,
+                password = passwordEncoder.encode(password),
+                nickname = nickname,
+                profile = profile
+        )
+        userRepository.save(user)
+        return user
     }
 }
