@@ -13,22 +13,21 @@ import javax.persistence.*
         allocationSize = 1
 )
 class Channel(
-        @Id
-        @GeneratedValue(
-                strategy = GenerationType.TABLE,
-                generator = "channel_seq_generator"
+        @Column(
+                name = "name",
+                nullable = false
         )
-        private val id: Int,
+        private val name: String,
 
         @Column(
                 name = "profile"
         )
-        private val profile: String,
+        private val profile: String? = null,
 
         @Column(
                 name = "thumbnail"
         )
-        private val thumbnail: String,
+        private val thumbnail: String? = null,
 
         @Column(
                 name = "subscribes",
@@ -40,12 +39,19 @@ class Channel(
         @JoinColumn(
                 name = "representative_video_id"
         )
-        private val representativeVideo: Video,
+        private val representativeVideo: Video? = null,
 
         @ManyToOne
         @JoinColumn(
-                name = "user_id"
+                name = "user_id",
+                nullable = false
         )
         private val user: User
 ) {
+    @Id
+    @GeneratedValue(
+            strategy = GenerationType.TABLE,
+            generator = "channel_seq_generator"
+    )
+    private val id: Int = 0
 }

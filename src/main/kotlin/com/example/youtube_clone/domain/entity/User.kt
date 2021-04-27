@@ -17,13 +17,6 @@ import javax.persistence.*
         allocationSize = 1
 )
 data class User(
-        @Id
-        @GeneratedValue(
-                strategy = GenerationType.TABLE,
-                generator = "user_seq_generator"
-        )
-        private val id: Int = -1,
-
         @Column(
                 name = "email",
                 nullable = false,
@@ -64,6 +57,13 @@ data class User(
         )
         private val updatedAt: LocalDateTime = LocalDateTime.now()
 ) {
+    @Id
+    @GeneratedValue(
+            strategy = GenerationType.TABLE,
+            generator = "user_seq_generator"
+    )
+    private val id: Int = 0
+
     fun getId(): Int {
         return id
     }

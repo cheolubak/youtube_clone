@@ -2,7 +2,9 @@ package com.example.youtube_clone.service
 
 import com.example.youtube_clone.domain.dto.LoginDTO
 import com.example.youtube_clone.domain.dto.SignUpDTO
+import com.example.youtube_clone.domain.entity.Channel
 import com.example.youtube_clone.domain.entity.User
+import com.example.youtube_clone.repository.ChannelRepository
 import com.example.youtube_clone.repository.UserRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -15,7 +17,8 @@ import java.util.*
 @Service
 class UserService(
         val passwordEncoder: PasswordEncoder,
-        val userRepository: UserRepository
+        val userRepository: UserRepository,
+        val channelRepository: ChannelRepository
 ) {
     val logger: Logger = LoggerFactory.getLogger(UserService::class.java)
 
@@ -48,6 +51,13 @@ class UserService(
                 profile = profile
         )
         userRepository.save(user)
+
+        val channel = Channel(
+                name = nickname,
+                user = user
+        )
+        channelRepository.save(channel)
+
         return user
     }
 }
