@@ -1,6 +1,6 @@
 package com.example.youtube_clone.domain.entity
 
-import com.example.youtube_clone.domain.enum.VideoStatus
+import com.example.youtube_clone.domain.enum.VideoStatusType
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.util.*
@@ -80,7 +80,7 @@ data class Video(
                 name = "status",
                 nullable = false
         )
-        private val status: VideoStatus = VideoStatus.READY,
+        private val status: VideoStatusType = VideoStatusType.READY,
 
         @CreationTimestamp
         @Temporal(TemporalType.TIMESTAMP)
