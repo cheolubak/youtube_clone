@@ -3,6 +3,7 @@ package com.example.youtube_clone.service
 import com.example.youtube_clone.domain.dto.AccessTokenDTO
 import com.example.youtube_clone.domain.dto.LoginDTO
 import com.example.youtube_clone.domain.dto.SignUpDTO
+import com.example.youtube_clone.domain.dto.UserDTO
 import com.example.youtube_clone.domain.entity.AccessToken
 import com.example.youtube_clone.domain.entity.Channel
 import com.example.youtube_clone.domain.entity.User
@@ -26,18 +27,18 @@ import java.util.*
 
 @Service
 class UserService(
-        val passwordEncoder: PasswordEncoder,
-        val userRepository: UserRepository,
-        val channelRepository: ChannelRepository,
-        val accessTokenRepository: AccessTokenRepository,
-        val tokenProvider: TokenProvider,
-        val requestProvider: RequestProvider
+    val passwordEncoder: PasswordEncoder,
+    val userRepository: UserRepository,
+    val channelRepository: ChannelRepository,
+    val accessTokenRepository: AccessTokenRepository,
+    val tokenProvider: TokenProvider,
+    val requestProvider: RequestProvider
 ) {
     val logger: Logger = LoggerFactory.getLogger(UserService::class.java)
 
     fun login(
-            loginDTO: LoginDTO,
-            clientKey: String
+        loginDTO: LoginDTO,
+        clientKey: String
     ): AccessTokenDTO {
         val email: String = loginDTO.getEmail()
         val password: String = loginDTO.getPassword()
@@ -51,11 +52,11 @@ class UserService(
             if (matched) {
                 val token = tokenProvider.createToken(user)
                 val accessToken = AccessToken(
-                        token = token,
-                        clientKey = clientKey,
-                        ip = ip,
-                        user = user,
-                        expiredAt = LocalDateTime.now().plusDays(1)
+                    token = token,
+                    clientKey = clientKey,
+                    ip = ip,
+                    user = user,
+                    expiredAt = LocalDateTime.now().plusDays(1)
                 )
                 accessTokenRepository.save(accessToken)
                 return AccessTokenDTO(token = accessToken.getToken())
@@ -66,8 +67,8 @@ class UserService(
     }
 
     fun signUp(
-            signUpDTO: SignUpDTO,
-            clientKey: String
+        signUpDTO: SignUpDTO,
+        clientKey: String
     ): AccessTokenDTO {
         val email: String = signUpDTO.getEmail()
         var password: String = signUpDTO.getPassword()
@@ -76,36 +77,64 @@ class UserService(
         val ip = requestProvider.getIp()
 
         val user = User(
-                email = email,
-                password = passwordEncoder.encode(password),
-                nickname = nickname,
-                profile = profile
+            email = email,
+            password = passwordEncoder.encode(password),
+            nickname = nickname,
+            profile = profile
         )
         userRepository.save(user)
 
         val token = tokenProvider.createToken(user)
 
         val accessToken = AccessToken(
-                token = token,
-                clientKey = clientKey,
-                ip = ip,
-                user = user,
-                expiredAt = LocalDateTime.now().plusDays(1)
+            token = token,
+            clientKey = clientKey,
+            ip = ip,
+            user = user,
+            expiredAt = LocalDateTime.now().plusDays(1)
         )
         accessTokenRepository.save(accessToken)
 
         val role = UserRole(
-                user = user,
-                role = UserRoleType.USER
+            user = user,
+            role = UserRoleType.USER
         )
         user.setRole(role)
 
         val channel = Channel(
-                name = nickname,
-                user = user
+            name = nickname,
+            user = user
         )
         channelRepository.save(channel)
 
         return AccessTokenDTO(token = accessToken.getToken())
+    }
+
+    fun getInfo(
+        clientKey: String,
+        accessToken: String
+    ): UserDTO {
+        val ip = requestProvider.getIp()
+        val findAccessToken = accessTokenRepository.findByTokenAndClientKeyAndIp(
+            accessToken, clientKey, ip
+        )
+        when {
+            findAccessToken.isPresent -> {
+                val token = findAccessToken.get()
+                val user = token.getUser()
+                val email = user.getEmail()
+                val nickname = user.getNickname()
+                val profile = user.getProfile()
+                return UserDTO(
+                    email = email,
+                    nickname = nickname,
+                    profile = profile
+                )
+            }
+            findAccessToken.isEmpty -> {
+                throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+            }
+        }
+        throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
     }
 }

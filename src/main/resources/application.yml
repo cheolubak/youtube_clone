@@ -6,6 +6,11 @@ spring:
     initialization-mode: always
     dbcp2:
       validation-query: SELECT 1
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 2GB
+      max-request-size: 2GB
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MariaDB103Dialect
@@ -30,3 +35,9 @@ logging:
         type:
           descriptor:
             BasicBinder: TRACE
+aws:
+  access-key:
+  secret-key:
+  s3:
+    Bucket:
+    region: ap-northeast-2
