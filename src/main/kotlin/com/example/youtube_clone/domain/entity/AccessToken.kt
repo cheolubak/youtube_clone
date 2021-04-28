@@ -30,13 +30,13 @@ data class AccessToken(
         @Column(
                 name = "created_at"
         )
-        private val createdAt: LocalDateTime,
+        private val createdAt: LocalDateTime = LocalDateTime.now(),
 
         @UpdateTimestamp
         @Column(
                 name = "updated_at"
         )
-        private val updatedAt: LocalDateTime,
+        private val updatedAt: LocalDateTime = LocalDateTime.now(),
 
         @Column(
                 name = "expired_at"

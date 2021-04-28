@@ -19,7 +19,9 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
-
+jwt:
+  secret:
+  token-validity-in-seconds: 86400
 logging:
   level:
     org:

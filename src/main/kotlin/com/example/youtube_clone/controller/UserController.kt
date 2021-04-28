@@ -6,10 +6,7 @@ import com.example.youtube_clone.domain.entity.User
 import com.example.youtube_clone.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
@@ -25,10 +22,11 @@ class UserController(
             method = [RequestMethod.POST]
     )
     fun signup(
+            @RequestHeader("CLIENT_KEY") clientKey: String,
             @RequestBody @Valid signUpDTO: SignUpDTO
-    ): ResponseEntity<User> {
-        val user = userService.signUp(signUpDTO)
-        return ResponseEntity(user, HttpStatus.CREATED)
+    ): ResponseEntity<String> {
+        val accessToken = userService.signUp(signUpDTO, clientKey)
+        return ResponseEntity(accessToken, HttpStatus.CREATED)
     }
 
     @RequestMapping(
