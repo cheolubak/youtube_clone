@@ -64,6 +64,9 @@ data class User(
     )
     private val id: Int = 0
 
+    @OneToOne(mappedBy = "user", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    private var role: UserRole? = null
+
     fun getId(): Int {
         return id
     }
@@ -90,5 +93,9 @@ data class User(
 
     fun getUpdatedAt(): LocalDateTime {
         return updatedAt
+    }
+
+    fun setRole(role: UserRole?) {
+        this.role = role
     }
 }

@@ -4,6 +4,8 @@ import com.example.youtube_clone.domain.dto.LoginDTO
 import com.example.youtube_clone.domain.dto.SignUpDTO
 import com.example.youtube_clone.domain.entity.Channel
 import com.example.youtube_clone.domain.entity.User
+import com.example.youtube_clone.domain.entity.UserRole
+import com.example.youtube_clone.domain.enum.UserRoleType
 import com.example.youtube_clone.repository.ChannelRepository
 import com.example.youtube_clone.repository.UserRepository
 import org.slf4j.Logger
@@ -51,6 +53,12 @@ class UserService(
                 profile = profile
         )
         userRepository.save(user)
+
+        val role = UserRole(
+                user = user,
+                role = UserRoleType.USER
+        )
+        user.setRole(role)
 
         val channel = Channel(
                 name = nickname,
