@@ -1,5 +1,6 @@
 package com.example.youtube_clone.controller
 
+import com.example.youtube_clone.domain.dto.AccessTokenDTO
 import com.example.youtube_clone.domain.dto.LoginDTO
 import com.example.youtube_clone.domain.dto.SignUpDTO
 import com.example.youtube_clone.domain.entity.User
@@ -24,7 +25,7 @@ class UserController(
     fun signup(
             @RequestHeader("CLIENT_KEY") clientKey: String,
             @RequestBody @Valid signUpDTO: SignUpDTO
-    ): ResponseEntity<String> {
+    ): ResponseEntity<AccessTokenDTO> {
         val accessToken = userService.signUp(signUpDTO, clientKey)
         return ResponseEntity(accessToken, HttpStatus.CREATED)
     }
@@ -36,7 +37,7 @@ class UserController(
     fun login(
             @RequestHeader("CLIENT_KEY") clientKey: String,
             @RequestBody @Valid loginDTO: LoginDTO
-    ): ResponseEntity<String> {
+    ): ResponseEntity<AccessTokenDTO> {
         val user = userService.login(loginDTO, clientKey)
         return ResponseEntity(user, HttpStatus.OK)
     }

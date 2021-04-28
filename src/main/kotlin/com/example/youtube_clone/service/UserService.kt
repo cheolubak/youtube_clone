@@ -1,5 +1,6 @@
 package com.example.youtube_clone.service
 
+import com.example.youtube_clone.domain.dto.AccessTokenDTO
 import com.example.youtube_clone.domain.dto.LoginDTO
 import com.example.youtube_clone.domain.dto.SignUpDTO
 import com.example.youtube_clone.domain.entity.AccessToken
@@ -37,7 +38,7 @@ class UserService(
     fun login(
             loginDTO: LoginDTO,
             clientKey: String
-    ): String {
+    ): AccessTokenDTO {
         val email: String = loginDTO.getEmail()
         val password: String = loginDTO.getPassword()
         val findUser: Optional<User> = userRepository.findByEmail(email)
@@ -57,7 +58,7 @@ class UserService(
                         expiredAt = LocalDateTime.now().plusDays(1)
                 )
                 accessTokenRepository.save(accessToken)
-                return accessToken.getToken()
+                return AccessTokenDTO(token = accessToken.getToken())
             } else throw ResponseStatusException(HttpStatus.NOT_ACCEPTABLE)
         } else {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
@@ -67,7 +68,7 @@ class UserService(
     fun signUp(
             signUpDTO: SignUpDTO,
             clientKey: String
-    ): String {
+    ): AccessTokenDTO {
         val email: String = signUpDTO.getEmail()
         var password: String = signUpDTO.getPassword()
         var nickname: String = signUpDTO.getNickname()
@@ -105,6 +106,6 @@ class UserService(
         )
         channelRepository.save(channel)
 
-        return accessToken.getToken()
+        return AccessTokenDTO(token = accessToken.getToken())
     }
 }
