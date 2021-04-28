@@ -7,7 +7,9 @@ import com.example.youtube_clone.domain.entity.Channel
 import com.example.youtube_clone.domain.entity.User
 import com.example.youtube_clone.domain.entity.UserRole
 import com.example.youtube_clone.domain.enum.UserRoleType
+import com.example.youtube_clone.provider.RequestProvider
 import com.example.youtube_clone.provider.TokenProvider
+import com.example.youtube_clone.repository.AccessTokenRepository
 import com.example.youtube_clone.repository.ChannelRepository
 import com.example.youtube_clone.repository.UserRepository
 import org.slf4j.Logger
@@ -26,37 +28,51 @@ class UserService(
         val passwordEncoder: PasswordEncoder,
         val userRepository: UserRepository,
         val channelRepository: ChannelRepository,
-        val tokenProvider: TokenProvider
+        val accessTokenRepository: AccessTokenRepository,
+        val tokenProvider: TokenProvider,
+        val requestProvider: RequestProvider
 ) {
     val logger: Logger = LoggerFactory.getLogger(UserService::class.java)
 
-    fun login(loginDTO: LoginDTO): User {
+    fun login(
+            loginDTO: LoginDTO,
+            clientKey: String
+    ): String {
         val email: String = loginDTO.getEmail()
         val password: String = loginDTO.getPassword()
         val findUser: Optional<User> = userRepository.findByEmail(email)
+        val ip = requestProvider.getIp()
 
         if (findUser.isPresent) {
             val user: User = findUser.get()
             val matched = passwordEncoder.matches(password, user.getPassword())
 
-            if (matched) return user
-            else throw ResponseStatusException(HttpStatus.NOT_ACCEPTABLE)
+            if (matched) {
+                val token = tokenProvider.createToken(user)
+                val accessToken = AccessToken(
+                        token = token,
+                        clientKey = clientKey,
+                        ip = ip,
+                        user = user,
+                        expiredAt = LocalDateTime.now().plusDays(1)
+                )
+                accessTokenRepository.save(accessToken)
+                return accessToken.getToken()
+            } else throw ResponseStatusException(HttpStatus.NOT_ACCEPTABLE)
         } else {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
     }
 
-    fun signUp(signUpDTO: SignUpDTO, clientKey: String): String {
+    fun signUp(
+            signUpDTO: SignUpDTO,
+            clientKey: String
+    ): String {
         val email: String = signUpDTO.getEmail()
         var password: String = signUpDTO.getPassword()
         var nickname: String = signUpDTO.getNickname()
         var profile: String? = signUpDTO.getProfile()
-
-        val req = (RequestContextHolder.currentRequestAttributes() as ServletRequestAttributes).request
-        var ip = req.getHeader("X-FORWARDED-FOR")
-        if (ip == null) {
-            ip = req.remoteAddr
-        }
+        val ip = requestProvider.getIp()
 
         val user = User(
                 email = email,
@@ -75,6 +91,7 @@ class UserService(
                 user = user,
                 expiredAt = LocalDateTime.now().plusDays(1)
         )
+        accessTokenRepository.save(accessToken)
 
         val role = UserRole(
                 user = user,

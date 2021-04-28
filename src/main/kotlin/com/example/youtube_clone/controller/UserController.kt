@@ -34,9 +34,10 @@ class UserController(
             method = [RequestMethod.POST]
     )
     fun login(
+            @RequestHeader("CLIENT_KEY") clientKey: String,
             @RequestBody @Valid loginDTO: LoginDTO
-    ): ResponseEntity<User> {
-        val user = userService.login(loginDTO)
+    ): ResponseEntity<String> {
+        val user = userService.login(loginDTO, clientKey)
         return ResponseEntity(user, HttpStatus.OK)
     }
 }
