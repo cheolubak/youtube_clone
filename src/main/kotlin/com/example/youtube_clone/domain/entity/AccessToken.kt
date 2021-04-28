@@ -11,6 +11,10 @@ import javax.persistence.*
 )
 data class AccessToken(
         @Id
+        @Column(
+                name = "token",
+                length = 500
+        )
         private val token: String,
 
         @Column(
