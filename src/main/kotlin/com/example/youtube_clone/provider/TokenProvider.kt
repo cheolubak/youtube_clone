@@ -19,15 +19,16 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Component
-class TokenProvider(
-        @Value("\${jwt.secret}")
-        private val secret: String,
-        @Value("\${jwt.token-validity-in-seconds}")
-        private val tokenValiditySecond: Int,
-) : InitializingBean {
+class TokenProvider : InitializingBean {
     private val logger: Logger = LoggerFactory.getLogger(TokenProvider::class.java)
     private val AUTHORITIES_KEY = "auth"
-    private var key: Key = TODO()
+    private lateinit var key: Key
+
+    @Value("\${jwt.secret}")
+    private lateinit var secret: String
+
+    @Value("\${jwt.token-validity-in-seconds}")
+    private var tokenValiditySecond: Int = 0
 
     override fun afterPropertiesSet() {
         val keyBytes = Decoders.BASE64.decode(secret)

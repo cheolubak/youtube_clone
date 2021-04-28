@@ -3,6 +3,7 @@ package com.example.youtube_clone.domain.entity
 import com.example.youtube_clone.domain.enum.UserRoleType
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
+import java.io.Serializable
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -35,5 +36,5 @@ data class UserRole(
                 name = "updated_at"
         )
         private val updatedAt: LocalDateTime = LocalDateTime.now()
-) {
+) : Serializable {
 }
