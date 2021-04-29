@@ -18,19 +18,19 @@ import javax.transaction.Transactional
 
 @Service
 class VideoService(
-  private val videoRepository: VideoRepository,
-  private val channelRepository: ChannelRepository,
-  private val accessTokenRepository: AccessTokenRepository,
-  private val requestProvider: RequestProvider,
-  private val s3Provider: S3Provider
+    private val videoRepository: VideoRepository,
+    private val channelRepository: ChannelRepository,
+    private val accessTokenRepository: AccessTokenRepository,
+    private val requestProvider: RequestProvider,
+    private val s3Provider: S3Provider
 ) {
   private val logger: Logger = LoggerFactory.getLogger(VideoService::class.java)
 
   @Transactional
   fun upload(
-    clientKey: String,
-    accessToken: String,
-    uploadDTO: UploadDTO
+      clientKey: String,
+      accessToken: String,
+      uploadDTO: UploadDTO
   ) {
     try {
       val videoFile = FileUtil.convertMultipartToFile(uploadDTO.getVideo())
@@ -43,9 +43,9 @@ class VideoService(
       val ip = requestProvider.getIp()
 
       val findAccessToken = accessTokenRepository.findByTokenAndClientKeyAndIp(
-        accessToken,
-        clientKey,
-        ip
+          accessToken,
+          clientKey,
+          ip
       )
 
       if (findAccessToken.isEmpty) {
@@ -60,18 +60,28 @@ class VideoService(
       }
 
       val video = Video(
-        uploadDTO.getName(),
-        thumbnailUrl = thumbnailS3,
-        videoUrl = videoS3,
-        description = uploadDTO.getDescription(),
-        status = VideoStatusType.READY,
-        duration = duration,
-        channel = channel.get()
+          uploadDTO.getName(),
+          thumbnailUrl = thumbnailS3,
+          videoUrl = videoS3,
+          description = uploadDTO.getDescription(),
+          status = VideoStatusType.READY,
+          duration = duration,
+          channel = channel.get()
       )
       videoRepository.save(video)
     } catch (e: Exception) {
       logger.error(e.toString())
       throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
     }
+  }
+
+  @Transactional
+  fun getList(
+      clientKey: String,
+      accessToken: String,
+      channelId: Int,
+      page: Int,
+      size: Int
+  ) {
   }
 }
